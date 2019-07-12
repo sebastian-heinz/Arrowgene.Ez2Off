@@ -1,0 +1,51 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Ez2Off CLI",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/Arrowgene.Ez2Off.CLI/bin/Debug/netcoreapp2.0/Arrowgene.Ez2Off.CLI.dll",
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "externalConsole": true
+        },
+        {
+            "name": "Ez2Off Server Reboot13",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/Arrowgene.Ez2Off.CLI/bin/Debug/netcoreapp2.0/Arrowgene.Ez2Off.CLI.dll",
+            "args": [
+                "server",
+                "reboot13"
+        
+            ],
+            "cwd": "${workspaceRoot}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "externalConsole": true
+        },
+        {
+            "name": "Ez2Off Server Solista",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/Arrowgene.Ez2Off.CLI/bin/Debug/netcoreapp2.0/Arrowgene.Ez2Off.CLI.dll",
+            "args": [
+                "server",
+                "solista"
+            ],
+            "cwd": "${workspaceRoot}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "externalConsole": true
+        }
+    ]
+}

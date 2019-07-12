@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.108" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.108" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
+    <PackageReference Include="System.Data.SQLite.Mac" Version="1.0.104.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Common\Arrowgene.Ez2Off.Common.csproj" />
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Data\Arrowgene.Ez2Off.Data.csproj" />
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Launcher\Arrowgene.Ez2Off.Launcher.csproj" />
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Server\Arrowgene.Ez2Off.Server.csproj" />
+  </ItemGroup>
+</Project>

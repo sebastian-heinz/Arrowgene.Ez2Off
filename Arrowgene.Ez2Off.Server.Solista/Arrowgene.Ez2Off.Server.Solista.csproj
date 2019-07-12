@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Title>Arrowgene.Ez2Off.Server.Solista</Title>
+        <Company>Arrowgene</Company>
+        <Product>Arrowgene.Ez2Off</Product>
+        <Version>0.0.0.0</Version>
+        <Copyright>Copyright © 2017 Arrowgene</Copyright>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Arrowgene.Ez2Off.Server\Arrowgene.Ez2Off.Server.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ContentWithTargetPath Include="Packets\Login\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>Scripts\Solista\Packets\Login\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+        <ContentWithTargetPath Include="Packets\World\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>Scripts\Solista\Packets\World\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+    </ItemGroup>
+</Project>

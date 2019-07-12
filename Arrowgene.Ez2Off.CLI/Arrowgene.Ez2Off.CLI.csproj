@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Title>Arrowgene.Ez2Off.CLI</Title>
+    <Company>Arrowgene</Company>
+    <Product>Arrowgene.Ez2Off</Product>
+    <Version>0.0.0.0</Version>
+    <Copyright>Copyright © 2017 Arrowgene</Copyright>
+    <StartupObject>Arrowgene.Ez2Off.CLI.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Common\Arrowgene.Ez2Off.Common.csproj" />
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Data\Arrowgene.Ez2Off.Data.csproj" />
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Server.Reboot13\Arrowgene.Ez2Off.Server.Reboot13.csproj" />
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Server.Solista\Arrowgene.Ez2Off.Server.Solista.csproj" />
+  </ItemGroup>
+</Project>
