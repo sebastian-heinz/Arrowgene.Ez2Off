@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -35,15 +35,64 @@ namespace Arrowgene.Ez2Off.Common
         public const byte KeyFirstParameter = 0x24;
         public const byte KeySecondParameter = 0x2A;
 
-        public static readonly Encoding KoreanEncoding = CodePagesEncodingProvider.Instance.GetEncoding("EUC-KR");
+        // 51949 | euc-kr | Korean (EUC)  
+        //public static readonly Encoding KoreanEncoding = CodePagesEncodingProvider.Instance.GetEncoding("EUC-KR");
+
+        // 949 | ks_c_5601-1987 | Korean     
+        public static readonly Encoding KoreanEncoding = CodePagesEncodingProvider.Instance.GetEncoding(949);
+
+        // 50225 | iso-2022-kr | Korean (ISO)  
+        // public static readonly Encoding KoreanEncoding = CodePagesEncodingProvider.Instance.GetEncoding(50225);
+
+        public static readonly CryptoRandom Random = new CryptoRandom();
+
+        private static readonly Random RandomNum = new Random();
+
+        public static int GetRandomNumber(int min, int max)
+        {
+            lock (RandomNum)
+            {
+                return RandomNum.Next(min, max);
+            }
+        }
+
+        
+        public static bool InRange(int low, int high, int x) 
+        { 
+            return ((x-high)*(x-low) <= 0); 
+        } 
+        
+        public static long GetUnixTime(DateTime dateTime)
+        {
+            return ((DateTimeOffset) dateTime).ToUnixTimeSeconds();
+        }
 
         public static byte[] DecryptParameter(byte[] parameter, byte key)
         {
-            int lenght = parameter.Length;
-            byte[] result = new byte[lenght];
-            for (int i = 0; i < lenght; i++)
+            int length = parameter.Length;
+            byte[] result = new byte[length];
+            for (int i = 0; i < length; i++)
             {
                 result[i] = (byte) (parameter[i] - key);
+            }
+
+            return result;
+        }
+
+        public static byte[] EncryptParameter(byte[] parameter, byte key, int len)
+        {
+            int length = parameter.Length;
+            byte[] result = new byte[len];
+            for (int i = 0; i < len; i++)
+            {
+                if (i < length)
+                {
+                    result[i] = (byte) (parameter[i] + key);
+                }
+                else
+                {
+                    result[i] = key;
+                }
             }
 
             return result;
@@ -224,18 +273,99 @@ namespace Arrowgene.Ez2Off.Common
 
             return filteredFiles;
         }
+        
+        public static List<DirectoryInfo> GetFolders(DirectoryInfo directoryInfo, string[] extensions, bool recursive)
+        {
+            if (recursive)
+            {
+                List<DirectoryInfo> result = new List<DirectoryInfo>();
+                List<DirectoryInfo> filteredDirectories = GetFolders(directoryInfo, extensions);
+                result.AddRange(filteredDirectories);
+                foreach (DirectoryInfo directory in filteredDirectories)
+                {
+                    List<DirectoryInfo> directories = GetFolders(directory, extensions, true);
+                    result.AddRange(directories);
+                }
+
+                return result;
+            }
+
+            return GetFolders(directoryInfo, extensions);
+        }
+
+        public static List<DirectoryInfo> GetFolders(DirectoryInfo directoryInfo, string[] extensions)
+        {
+            List<DirectoryInfo> filteredDirectories = new List<DirectoryInfo>();
+            DirectoryInfo[] directories = directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly);
+            foreach (DirectoryInfo directory in directories)
+            {
+                if (extensions != null)
+                {
+                    foreach (string extension in extensions)
+                    {
+                        if (directory.Name.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+                        {
+                            filteredDirectories.Add(directory);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    filteredDirectories.Add(directory);
+                }
+            }
+
+            return filteredDirectories;
+        }
+
 
         public static DirectoryInfo EnsureDirectory(string directory)
         {
             return Directory.CreateDirectory(directory);
         }
 
-        public static string ApplicationDirectory()
+        /// <summary>
+        /// The directory of the executing assembly.
+        /// This might not be the location where the .dll files are located.
+        /// </summary>
+        /// <returns></returns>
+        public static string ExecutingDirectory()
         {
             string path = Assembly.GetEntryAssembly().CodeBase;
             Uri uri = new Uri(path);
             string directory = Path.GetDirectoryName(uri.LocalPath);
             return directory;
+        }
+
+        /// <summary>
+        /// The relative directory of the executing assembly.
+        /// This might not be the location where the .dll files are located.
+        /// </summary>
+        public static string RelativeExecutingDirectory()
+        {
+            return RelativeDirectory(Environment.CurrentDirectory, ExecutingDirectory());
+        }
+
+        /// <summary>
+        /// Directory of Common.dll
+        /// This is expected to contain ressource files.
+        /// </summary>
+        public static string CommonDirectory()
+        {
+            string location = typeof(Utils).GetTypeInfo().Assembly.Location;
+            Uri uri = new Uri(location);
+            string directory = Path.GetDirectoryName(uri.LocalPath);
+            return directory;
+        }
+
+        /// <summary>
+        /// Relative Directory of Common.dll.
+        /// This is expected to contain ressource files.
+        /// </summary>
+        public static string RelativeCommonDirectory()
+        {
+            return RelativeDirectory(Environment.CurrentDirectory, CommonDirectory());
         }
 
         public static string CreateMD5(string input)
@@ -363,11 +493,6 @@ namespace Arrowgene.Ez2Off.Common
             return path;
         }
 
-        public static string RelativeApplicationDirectory()
-        {
-            return RelativeDirectory(Environment.CurrentDirectory, ApplicationDirectory());
-        }
-
         public static string GenerateSessionKey(int desiredLength)
         {
             StringBuilder sessionKey = new StringBuilder();
@@ -388,6 +513,38 @@ namespace Arrowgene.Ez2Off.Common
             }
 
             return sessionKey.ToString();
+        }
+
+        public static byte[] GenerateKey(int desiredLength)
+        {
+            byte[] random = new byte[desiredLength];
+            using (RNGCryptoServiceProvider cryptoProvider = new RNGCryptoServiceProvider())
+            {
+                cryptoProvider.GetNonZeroBytes(random);
+            }
+
+            return random;
+        }
+
+        /// <summary>
+        /// Removes entries from a collection.
+        /// The input lists are not modified, instead a new collection is returned.
+        /// </summary>
+        public static TList SubtractList<TList, TItem>(TList entries, params TItem[] excepts)
+            where TList : ICollection<TItem>, new()
+        {
+            TList result = new TList();
+            foreach (TItem entry in entries)
+            {
+                result.Add(entry);
+            }
+
+            foreach (TItem except in excepts)
+            {
+                result.Remove(except);
+            }
+
+            return result;
         }
     }
 }

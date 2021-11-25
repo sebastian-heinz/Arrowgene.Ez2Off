@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -21,6 +21,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Arrowgene.Ez2Off.Common.Models
 {
@@ -30,14 +31,16 @@ namespace Arrowgene.Ez2Off.Common.Models
         public Player()
         {
             Playing = false;
-            Ready = false;
+            Ready = ReadyType.NotReady;
             Team = TeamType.None;
             Slot = 0;
+            Loading = false;
         }
 
         public bool Playing { get; set; }
-        public bool Ready { get; set; }
+        public ReadyType Ready { get; set; }
         public TeamType Team { get; set; }
         public int Slot { get; set; }
+        public bool Loading { get; set; }
     }
 }

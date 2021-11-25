@@ -1,0 +1,1 @@
+dotnet test Arrowgene.Ez2Off.Test

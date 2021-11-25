@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -20,31 +20,20 @@
  * along with Arrowgene.Ez2Off. If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Arrowgene.Services.Buffers;
+using Arrowgene.Buffers;
 
 namespace Arrowgene.Ez2Off.Server.Packet
 {
     public class EzPacket
     {
-        public const int HeaderSize = 7;
-
         public EzPacket(byte id, IBuffer buffer)
         {
             Data = buffer;
             Id = id;
         }
 
-        public IBuffer ToData()
-        {
-            IBuffer data = EzServer.Buffer.Provide();
-            data.WriteByte(Id);
-            data.WriteInt16((short) Data.Size, Endianness.Big);
-            data.WriteInt32(0);
-            data.WriteBuffer(Data);
-            return data;
-        }
-
         public IBuffer Data { get; }
         public byte Id { get; }
+        public IBuffer Encrypted { get; set; }
     }
 }

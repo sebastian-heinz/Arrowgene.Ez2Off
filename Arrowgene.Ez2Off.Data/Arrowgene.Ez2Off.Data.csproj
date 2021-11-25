@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Title>Arrowgene.Ez2Off.Data</Title>
     <Company>Arrowgene</Company>
     <Product>Arrowgene.Ez2Off</Product>
@@ -8,9 +8,9 @@
     <Copyright>Copyright © 2017 Arrowgene</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Arrowgene.Services" Version="1.9.7" />
+    <ProjectReference Include="..\Arrowgene.Ez2Off.Common\Arrowgene.Ez2Off.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Arrowgene.Ez2Off.Common\Arrowgene.Ez2Off.Common.csproj" />
+    <PackageReference Include="Arrowgene.Services" Version="1.14.0" />
   </ItemGroup>
 </Project>

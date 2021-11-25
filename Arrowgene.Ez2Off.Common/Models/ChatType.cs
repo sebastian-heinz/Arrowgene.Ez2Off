@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -28,6 +28,9 @@ namespace Arrowgene.Ez2Off.Common.Models
     public enum ChatType
     {
         Lobby = 1,
-        Room =2
+        Room = 2,
+        Gm = 99,
+        Whisper = 100,
+        Direct = 101
     }
 }

@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -20,6 +20,7 @@
  * along with Arrowgene.Ez2Off. If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
 using Arrowgene.Ez2Off.Common.Models;
 
@@ -27,13 +28,17 @@ namespace Arrowgene.Ez2Off.Server.Database
 {
     public interface IDatabase
     {
+        void Execute(string sql);
+        string GetSetting(string key);
+        bool SetSetting(string key, string value);
+        bool DeleteSetting(string key);
         Account CreateAccount(string name, string hash);
         bool UpdateAccount(Account account);
         Account SelectAccount(string accountName);
         Setting SelectSetting(int accountId);
-        bool UpsertSetting(Setting setting, int accountId);
-        Character SelectCharacter(int accountId);
-        bool UpsertCharacter(Character character, int accountId);
+        bool UpsertSetting(Setting setting);
+        Character SelectCharacter(int characterId);
+        bool UpsertCharacter(Character character);
         Character SelectCharacter(string characterName);
         Item SelectItem(int itemId);
         bool UpsertItem(Item item);
@@ -41,17 +46,44 @@ namespace Arrowgene.Ez2Off.Server.Database
         InventoryItem SelectInventoryItem(int inventoryItemId);
         bool InsertInventoryItem(InventoryItem inventoryItem);
         bool DeleteInventoryItem(int inventoryItemId);
-        List<InventoryItem> SelectInventoryItems(int accountId);
+        bool DeleteInventoryItems(List<int> inventoryItemIds);
+        List<InventoryItem> SelectInventoryItems(int characterId);
+        List<InventoryItem> SelectExpiredInventoryItems();
         bool UpdateInventoryItem(InventoryItem inventoryItem);
         Quest SelectQuest(int questId);
         bool UpsertQuest(Quest quest);
-        DatabaseMeta SelectMeta(int version);
-        bool UpsertMeta(DatabaseMeta meta);
         Song SelectSong(int songId);
+        List<Song> SelectSongs();
         bool UpsertSong(Song song);
-        List<Score> SelectBestScores(int songId, DifficultyType difficulty, int scoreCount = -1);
-        Score SelectBestScore(int accountId, int songId, DifficultyType difficulty);
+        List<Radiomix> SelectRadiomixes();
+        bool UpsertRadiomix(Radiomix radiomix);
+        Score SelectScore(int scoreId);
+        List<Score> SelectBestScores(int songId, ModeType mode, DifficultyType difficulty, int scoreCount = -1);
+        Score SelectBestScore(int accountId, int songId, ModeType mode, DifficultyType difficulty);
+        Score SelectMaxScore(int characterId, ModeType mode);
         bool InsertScore(Score score);
+        Game SelectGame(int gameId);
         bool InsertGame(Game game);
+        Rank SelectRank(int rankId);
+        bool InsertRank(Rank rank);
+        bool UpsertStatus(DateTime status);
+        List<Message> SelectMessages(int characterId);
+        bool InsertMessage(Message message);
+        bool UpdateMessage(Message message);
+        bool DeleteMessage(int messageId);
+        List<Friend> SelectFriends(int characterId);
+        bool InsertFriend(Friend friend);
+        bool DeleteFriend(int friendId);
+        GiftItem SelectGiftItem(int giftItemId);
+        bool InsertGiftItem(GiftItem giftItem);
+        bool UpdateGiftItem(GiftItem giftItem);
+        bool DeleteGiftItem(int giftItemId);
+        List<GiftItem> SelectGiftItems(int characterId);
+        List<GiftItem> SelectExpiredGifts();
+        bool DeleteGifts(List<int> giftIds);
+        bool InsertIncident(Incident incident);
+        bool InsertIdentification(Identification identification);
+        bool InsertScoreIncident(Incident incident, int scoreId);
+        bool InsertScoreIncident(int incidentId, int scoreId);
     }
 }

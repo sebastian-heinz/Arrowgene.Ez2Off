@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -30,11 +30,26 @@ namespace Arrowgene.Ez2Off.Common.Models
         public Game()
         {
             Id = -1;
+            Created = DateTime.Now;
+        }
+
+        public Game(RoomInfo roomInfo, Song song) : this()
+        {
+            Name = roomInfo.Name;
+            GroupType = roomInfo.GameGroupType;
+            Type = roomInfo.GameType;
+            Mode = roomInfo.Mode;
+            Difficulty = roomInfo.Difficulty;
+            Song = song;
         }
 
         public int Id { get; set; }
         public GameGroupType GroupType { get; set; }
         public GameType Type { get; set; }
         public string Name { get; set; }
+        public Song Song { get; set; }
+        public DateTime Created { get; set; }
+        public ModeType Mode { get; set; }
+        public DifficultyType Difficulty { get; set; }
     }
 }

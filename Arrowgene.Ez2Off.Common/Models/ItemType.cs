@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -27,10 +27,13 @@ namespace Arrowgene.Ez2Off.Common.Models
     [Serializable]
     public enum ItemType
     {
-        Skin = 0,
-        Avatar = 1,
-        Effect = 2,
-        Special = 3,
-        Note = 4
+        Avatar = 0,
+        Skin = 1,
+        Note = 2,
+        Premium1 = 3,
+        Premium2 = 4,
+        Premium3 = 5,
+        Premium4 = 6,
+
     }
 }

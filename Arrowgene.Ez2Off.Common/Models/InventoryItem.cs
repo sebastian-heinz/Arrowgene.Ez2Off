@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -35,14 +35,62 @@ namespace Arrowgene.Ez2Off.Common.Models
             Id = -1;
             Slot = -1;
             Equipped = -1;
-            AccountId = -1;
+            CharacterId = -1;
+            EquipDate = null;
         }
 
         public int Id { get; set; }
-        public int AccountId { get; set; }
+        public int CharacterId { get; set; }
         public DateTime PurchaseDate { get; set; }
+        public DateTime? EquipDate { get; set; }
+        public DateTime? ExpireDate { get; set; }
         public Item Item { get; set; }
         public int Equipped { get; set; }
         public int Slot { get; set; }
+
+        public int GetEquipDateUnixTime()
+        {
+            if (EquipDate.HasValue)
+            {
+                return (int) Utils.GetUnixTime(EquipDate.Value);
+            }
+
+            return 0;
+        }
+
+        public bool IsEquipped()
+        {
+            return Equipped != Inventory.InvalidSlot;
+        }
+
+        /// <summary>
+        /// Sets the item to status "Used"
+        /// </summary>
+        public void MarkUsed()
+        {
+            if (!ExpireDate.HasValue)
+            {
+                DateTime now = DateTime.Now;
+                EquipDate = now;
+                ExpireDate = now.AddDays(Item.Duration);
+            }
+        }
+
+        public bool IsUsed()
+        {
+            return ExpireDate.HasValue;
+        }
+
+        public int UsedDayCount()
+        {
+            int usedDays = 0;
+            if (EquipDate.HasValue)
+            {
+                TimeSpan duration = DateTime.Now - EquipDate.Value;
+                usedDays = (int) duration.TotalDays;
+            }
+
+            return Item.Duration - usedDays;
+        }
     }
 }

@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -21,7 +21,6 @@
  */
 
 using System.IO;
-using System.Net;
 using Arrowgene.Ez2Off.Common;
 using Arrowgene.Ez2Off.Common.Json;
 
@@ -29,7 +28,8 @@ namespace Arrowgene.Ez2Off.Server.Settings
 {
     public class SettingsProvider
     {
-        private string _directory;
+        private readonly string _directory;
+
 
         public SettingsProvider(string directory = null)
         {
@@ -39,45 +39,18 @@ namespace Arrowgene.Ez2Off.Server.Settings
             }
             else
             {
-                _directory = Utils.RelativeApplicationDirectory();
+                _directory = Utils.RelativeExecutingDirectory();
             }
         }
 
-        /// <summary>
-        /// Creates a default configuration to use for a local setup.
-        /// </summary>
-        /// <returns></returns>
-        public SettingsContainer CreateLocalSettings()
+        public string GetSettingsPath(string file)
         {
-            IPAddress loginPublic = IPAddress.Loopback;
-            IPAddress loginListen = IPAddress.Any;
-            ushort loginPort = 9350;
-            ushort loginBridgePort = 9355;
-
-            IPAddress worldPublic = IPAddress.Loopback;
-            IPAddress worldListen = IPAddress.Any;
-            ushort worldPort = 9360;
-            ushort worldBridgePort = 9365;
-
-            SettingsContainer container = new SettingsContainer();
-            container.LoginSettings = new LoginServerSettings(loginPublic, loginListen, loginPort, loginBridgePort);
-            container.AddWorldServer(new WorldServerSettings(worldPublic, worldListen, worldPort, worldBridgePort));
-
-            container.LoginSettings.HandlerScriptsPath = Path.Combine(Utils.RelativeApplicationDirectory(),
-                Utils.DirectorySeparator("Scripts/Reboot13/Packets/Login"));
-
-            foreach (WorldServerSettings worldServerSetting in container.WorldSettingsList)
-            {
-                worldServerSetting.HandlerScriptsPath = Path.Combine(Utils.RelativeApplicationDirectory(),
-                    Utils.DirectorySeparator("Scripts/Reboot13/Packets/World"));
-            }
-
-            return container;
+            return Path.Combine(_directory, file);
         }
 
         public void Save<T>(T settings, string file)
         {
-            string path = Path.Combine(_directory, file);
+            string path = GetSettingsPath(file);
             string json = JsonSerializer.Serialize(settings);
             File.WriteAllText(path, json);
         }
@@ -85,7 +58,7 @@ namespace Arrowgene.Ez2Off.Server.Settings
         public T Load<T>(string file)
         {
             T settings;
-            string path = Path.Combine(_directory, file);
+            string path = GetSettingsPath(file);
             if (File.Exists(path))
             {
                 string json = File.ReadAllText(path);

@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -30,18 +30,26 @@ namespace Arrowgene.Ez2Off.Common.Models
         public string Key { get; }
         public DateTime Creation { get; }
         public Account Account { get; }
-        public Character Character { get; set; }
-        public Setting Setting { get; set; }
+        public Character Character { get; }
+        public Setting Setting { get; }
+        public Inventory Inventory { get; }
+        public MessageBox MessageBox { get; }
+        public FriendList Friends { get; }
+
+        public int ServerId { get; set; }
         public ModeType Mode { get; set; }
-        public bool IsLoggedIn { get; set; }
         public int ChannelId { get; set; }
-        public Inventory Inventory { get; set; }
 
         public Session(string sessionKey, Account account)
         {
             Key = sessionKey;
             Creation = DateTime.Now;
             Account = account;
+            Character = new Character();
+            MessageBox = new MessageBox();
+            Inventory = new Inventory();
+            Friends = new FriendList();
+            Setting = new Setting();
         }
     }
 }

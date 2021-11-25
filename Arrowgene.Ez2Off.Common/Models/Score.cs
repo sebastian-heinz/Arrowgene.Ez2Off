@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -31,7 +31,7 @@ namespace Arrowgene.Ez2Off.Common.Models
         {
             if (score.MaxCombo == score.TotalNotes)
             {
-                if (score.Good == 0 && score.Miss == 0 && score.Fail == 0)
+                if (score.Good == 0 && score.Fail == 0) //&& score.Miss == 0
                 {
                     if (score.Cool == 0)
                     {
@@ -57,9 +57,9 @@ namespace Arrowgene.Ez2Off.Common.Models
         }
 
         public int Id { get; set; }
-        public int GameId { get; set; }
-        public int AccountId { get; set; }
-        public int SongId { get; set; }
+        public Game Game { get; set; }
+        public Character Character { get; set; }
+        public Song Song { get; set; }
         public DifficultyType Difficulty { get; set; }
         public bool StageClear { get; set; }
         public int MaxCombo { get; set; }
@@ -75,10 +75,9 @@ namespace Arrowgene.Ez2Off.Common.Models
         public int TotalScore => CalulateTotalScore();
         public NoteEffectType NoteEffect { get; set; }
         public FadeEffectType FadeEffect { get; set; }
-        public TeamType Team { get; set; }
-        public int Slot { get; set; }
         public DateTime Created { get; set; }
-        public string CharacterName { get; set; }
+        public ModeType Mode { get; set; }
+        public bool Incident { get; set; }
 
         private int CalulateTotalScore()
         {

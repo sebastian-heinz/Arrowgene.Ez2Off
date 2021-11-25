@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -27,8 +27,12 @@ namespace Arrowgene.Ez2Off.Common.Models
     [Serializable]
     public enum AccountState
     {
-        Banned = -100,
-        Player = 0,
-        GameMaster = 100
+        Banned = -1,
+        NoUser = 0,
+        User = 1,
+        Premium = 25,
+        Moderator = 50,
+        Manager = 75,
+        Admin = 100
     }
 }

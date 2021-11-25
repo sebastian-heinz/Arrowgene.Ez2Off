@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -20,13 +20,14 @@
  * along with Arrowgene.Ez2Off. If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using Arrowgene.Ez2Off.Common;
-using Arrowgene.Ez2Off.Server;
 
 namespace Arrowgene.Ez2Off.CLI
 {
-    using System;
-
     public static class Program
     {
         public const int ExitCodeOk = 0;
@@ -34,6 +35,25 @@ namespace Arrowgene.Ez2Off.CLI
 
         static int Main(string[] args)
         {
+            //  List<string> ids = new List<string>();
+         //  foreach (string file in Directory.GetFiles(@"C:\Users\railgun\Downloads\a", "*",
+         //      SearchOption.TopDirectoryOnly))
+         //  {
+         //      string text = Utils.ReadFileText(file);
+         //      if (text.Contains("cheat"))
+         //      {
+         //          int startIdx = file.IndexOf("audit-") + 6;
+         //          int endIdx = file.IndexOf("-", startIdx);
+         //          int len = endIdx - startIdx;
+         //          string id = file.Substring(startIdx, len);
+         //          if (!ids.Contains(id))
+         //          {
+         //              ids.Add(id);
+         //          }
+         //      }
+         //  }
+         // string result = string.Join(",", ids);
+            
             PrintVersion();
             if (args.Length >= 1)
             {
@@ -45,6 +65,10 @@ namespace Arrowgene.Ez2Off.CLI
                 {
                     case "server":
                         return ServerProgram.EntryPoint(programArgs);
+                    case "data":
+                        return DataProgram.EntryPoint(programArgs);
+                    case "game":
+                        return GameProgram.EntryPoint(programArgs);
                     default:
                     {
                         Help();
@@ -63,12 +87,13 @@ namespace Arrowgene.Ez2Off.CLI
             Console.WriteLine(Environment.NewLine);
             Console.WriteLine("Usage:");
             Console.WriteLine("Arrowgene.Ez2Off.CLI.exe server");
+            Console.WriteLine("Arrowgene.Ez2Off.CLI.exe data");
+            Console.WriteLine("Arrowgene.Ez2Off.CLI.exe game");
         }
 
         private static void PrintVersion()
         {
             Console.WriteLine("Command Line Ver.: {0}", GetVersion());
-            Console.WriteLine("EzServer Ver.: {0}", EzServer.GetVersion());
         }
 
         public static string GetVersion()
@@ -81,5 +106,6 @@ namespace Arrowgene.Ez2Off.CLI
 
             return Utils.DefaultVersion;
         }
+
     }
 }

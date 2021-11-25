@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Title>Arrowgene.Ez2Off.Server.Reboot14</Title>
+        <Company>Arrowgene</Company>
+        <Product>Arrowgene.Ez2Off</Product>
+        <Version>0.0.0.0</Version>
+        <Copyright>Copyright © 2020 Arrowgene</Copyright>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Arrowgene.Ez2Off.Common\Arrowgene.Ez2Off.Common.csproj" />
+        <ProjectReference Include="..\Arrowgene.Ez2Off.Server\Arrowgene.Ez2Off.Server.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <ContentWithTargetPath Include="Packets\Login\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>Scripts\Reboot14\Packets\Login\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+        <ContentWithTargetPath Include="Packets\World\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>Scripts\Reboot14\Packets\World\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+        <ContentWithTargetPath Include="Data\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>Data\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+    </ItemGroup>
+</Project>

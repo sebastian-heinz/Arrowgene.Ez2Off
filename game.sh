@@ -1,0 +1,1 @@
+dotnet run --project Arrowgene.Ez2Off.CLI game r13 /Users/railgun/.wine/drive_c/ez2on/EZ2ON_ONLINE.exe Account Hash Session wine

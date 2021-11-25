@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -27,18 +27,21 @@ namespace Arrowgene.Ez2Off.Common.Models
     [Serializable]
     public class Account
     {
-        public int Id { get; }
+        public int Id { get; set; }
         public string Name { get; set; }
+        public string NormalName { get; set; }
         public string Hash { get; set; }
+        public string Mail { get; set; }
+        public string MailToken { get; set; }
+        public string PasswordToken { get; set; }
+        public bool MailVerified { get; set; }
+        public DateTime? MailVerifiedAt { get; set; }
         public AccountState State { get; set; }
+        public DateTime? LastLogin { get; set; }
+        public DateTime Created { get; set; }
 
-        public Account(int id, string name, string hash, AccountState state)
+        public Account()
         {
-            Id = id;
-            Name = name;
-            Hash = hash;
-            State = state;
         }
-        
     }
 }

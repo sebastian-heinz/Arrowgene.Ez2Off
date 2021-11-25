@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -22,11 +22,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading;
 using Arrowgene.Ez2Off.Common;
 using Arrowgene.Ez2Off.Server;
-using Arrowgene.Ez2Off.Server.Log;
+using Arrowgene.Ez2Off.Server.Logs;
+using Arrowgene.Ez2Off.Server.Packet;
+using Arrowgene.Ez2Off.Server.Packet.Builder;
+using Arrowgene.Ez2Off.Server.Reboot13;
+using Arrowgene.Ez2Off.Server.Reboot14;
 using Arrowgene.Ez2Off.Server.Settings;
-using Arrowgene.Services.Logging;
+using Arrowgene.Logging;
 
 namespace Arrowgene.Ez2Off.CLI
 {
@@ -34,74 +41,52 @@ namespace Arrowgene.Ez2Off.CLI
     {
         public const string LocalSettingsContainer = "server_settings.json";
 
+        private static readonly ILogger _logger = LogProvider.Logger(typeof(ServerProgram));
+        
         public static int EntryPoint(string[] args)
         {
             Console.OutputEncoding = Utils.KoreanEncoding;
-            LogProvider.GlobalLogWrite += LogProviderOnLogWrite;
             Console.Title = "EzServer";
             ServerProgram p = new ServerProgram();
             return p.Run(args);
         }
 
-        private static void LogProviderOnLogWrite(object sender, LogWriteEventArgs logWriteEventArgs)
-        {
-            switch (logWriteEventArgs.Log.LogLevel)
-            {
-                case LogLevel.Debug:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogLevel.Info:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    break;
-                case LogLevel.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-            }
-
-            if (logWriteEventArgs.Log.Tag is EzLogPacketType)
-            {
-                switch (logWriteEventArgs.Log.Tag)
-                {
-                    case EzLogPacketType.In:
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        break;
-                    case EzLogPacketType.Out:
-                        Console.ForegroundColor = ConsoleColor.Magenta;
-                        break;
-                    case EzLogPacketType.Unhandeled:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        break;
-                }
-            }
-
-            Console.WriteLine(logWriteEventArgs.Log);
-            Console.ResetColor();
-        }
-
         private VersionType _versionType;
-        private Logger _logger;
+        private bool _server;
+        private EzSettings _settings;
+        private readonly object _consoleLock;
 
         public ServerProgram()
         {
-            _logger = LogProvider<Logger>.GetLogger(this);
+            LogProvider.GlobalLogWrite += LogProviderOnLogWrite;
+            _server = false;
+            _consoleLock = new object();
         }
 
         private int Run(string[] args)
         {
             if (args.Length >= 1)
             {
-                if (args[0] == "solista")
-                {
-                    _versionType = VersionType.Solista;
-                }
-                else if (args[0] == "reboot13")
+                if (args[0] == "reboot13")
                 {
                     _versionType = VersionType.Reboot13;
+                }
+                else if (args[0] == "reboot14")
+                {
+                    _versionType = VersionType.Reboot14;
                 }
                 else
                 {
                     Help();
                     return Program.ExitCodeWrongParameters;
+                }
+
+                for (int i = 1; i < args.Length; i++)
+                {
+                    if (args[i] == "--server")
+                    {
+                        _server = true;
+                    }
                 }
 
                 Start();
@@ -122,71 +107,116 @@ namespace Arrowgene.Ez2Off.CLI
             Console.WriteLine(Environment.NewLine);
             Console.WriteLine("Usage:");
             Console.WriteLine("Arrowgene.Ez2Off.CLI.exe server reboot13");
-            Console.WriteLine("Arrowgene.Ez2Off.CLI.exe server solista");
-            Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("You can adjust the configuration in the file '" + ConfigFileName + "'.");
+            Console.WriteLine("Arrowgene.Ez2Off.CLI.exe server reboot14");
         }
-
-        public object ConfigFileName { get; set; }
 
         private void Start()
         {
-            _logger.Debug("Environment:");
-            _logger.Debug("CurrentDirectory: {0}", Environment.CurrentDirectory);
-            _logger.Debug("ApplicationDirectory: {0}", Utils.ApplicationDirectory());
-            _logger.Debug("RelativeApplicationDirectory: {0}", Utils.RelativeApplicationDirectory());
-            _logger.Debug("OS: {0}", Environment.OSVersion);
-            _logger.Debug(".NET: {0}", Environment.Version);
-            _logger.Debug("x64: {0}", Environment.Is64BitProcess);
-            _logger.Debug("Processors: {0}", Environment.ProcessorCount);
-            _logger.Debug("---");
-
             SettingsProvider settingsProvider = new SettingsProvider();
-            SettingsContainer settingsContainer = settingsProvider.Load<SettingsContainer>(LocalSettingsContainer);
-            if (settingsContainer == null)
+            _settings = settingsProvider.Load<EzSettings>(LocalSettingsContainer);
+            if (_settings == null)
             {
-                settingsContainer = settingsProvider.CreateLocalSettings();
-                settingsProvider.Save(settingsContainer, LocalSettingsContainer);
-                _logger.Info("No settings found ({0}), creating new one.", LocalSettingsContainer);
-            }
-            else
-            {
-                _logger.Info("Loaded settings configuration ({0}).", LocalSettingsContainer);
+                _settings = new EzSettings();
+                settingsProvider.Save(_settings, LocalSettingsContainer);
             }
 
-            List<EzServer> servers = new List<EzServer>();
-            if (_versionType == VersionType.Reboot13)
+            _logger.Info("Starting Server");
+            _logger.Info($"Loaded Settings: {settingsProvider.GetSettingsPath(LocalSettingsContainer)}");
+
+            EzServer server;
+            switch (_versionType)
             {
-                foreach (WorldServerSettings serverSettings in settingsContainer.WorldSettingsList)
-                {
-                    servers.Add(new Server.Reboot13.WorldServer(settingsContainer, serverSettings));
-                }
-                servers.Add(new Server.Reboot13.LoginServer(settingsContainer));
+                case VersionType.Reboot13:
+                    R13Database dbR13 = new R13Database();
+                    dbR13.Prepare(_settings.DatabaseSettings);
+                    server = new EzServer(_settings, new R13Provider());
+                    break;
+                case VersionType.Reboot14:
+                    R14Database dbR14 = new R14Database();
+                    dbR14.Prepare(_settings.DatabaseSettings);
+                    server = new EzServer(_settings, new R14Provider());
+                    break;
+                default:
+                    _logger.Error("Invalid Parameter");
+                    return;
             }
-            else if (_versionType == VersionType.Solista)
+
+            server.Start();
+
+            if (_server)
             {
-                foreach (WorldServerSettings serverSettings in settingsContainer.WorldSettingsList)
+                while (_server)
                 {
-                    servers.Add(new Server.Solista.WorldServer(settingsContainer, serverSettings));
+                    Thread.Sleep(TimeSpan.FromMinutes(5));
                 }
-                servers.Add(new Server.Solista.LoginServer(settingsContainer));
             }
             else
             {
-                Console.WriteLine("Invalid parameter.");
+                Console.WriteLine("Press 'e' to exit");
+                bool readKey = true;
+                while (readKey)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    switch (keyInfo.Key)
+                    {
+                        case ConsoleKey.R:
+                            Console.WriteLine("Restart...");
+                            server.Stop();
+                            server.Start();
+                            break;
+                        case ConsoleKey.E:
+                            Console.WriteLine("Exiting...");
+                            readKey = false;
+                            Environment.Exit(0);
+                            break;
+                    }
+                }
+            }
+        }
+        
+        private void LogProviderOnLogWrite(object sender, LogWriteEventArgs logWriteEventArgs)
+        {
+            if (_settings.LogLevel > (int) logWriteEventArgs.Log.LogLevel)
+            {
                 return;
             }
 
-            foreach (EzServer server in servers)
+
+            ConsoleColor consoleColor = ConsoleColor.Gray;
+            switch (logWriteEventArgs.Log.LogLevel)
             {
-                server.Start();
+                case LogLevel.Debug:
+                    consoleColor = ConsoleColor.Yellow;
+                    break;
+                case LogLevel.Info:
+                    consoleColor = ConsoleColor.Cyan;
+                    break;
+                case LogLevel.Error:
+                    consoleColor = ConsoleColor.Red;
+                    break;
             }
 
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
-            foreach (EzServer server in servers)
+            if (logWriteEventArgs.Log.Tag is EzLogPacketType)
             {
-                server.Stop();
+                switch (logWriteEventArgs.Log.Tag)
+                {
+                    case EzLogPacketType.In:
+                        consoleColor = ConsoleColor.Green;
+                        break;
+                    case EzLogPacketType.Out:
+                        consoleColor = ConsoleColor.Magenta;
+                        break;
+                    case EzLogPacketType.Unhandled:
+                        consoleColor = ConsoleColor.Red;
+                        break;
+                }
+            }
+
+            lock (_consoleLock)
+            {
+                Console.ForegroundColor = consoleColor;
+                Console.WriteLine(logWriteEventArgs.Log);
+                Console.ResetColor();
             }
         }
     }

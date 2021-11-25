@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -21,7 +21,6 @@
  */
 
 using System;
-using Arrowgene.Ez2Off.Common.Models;
 
 namespace Arrowgene.Ez2Off.Common.Models
 {
@@ -36,7 +35,7 @@ namespace Arrowgene.Ez2Off.Common.Models
             NoteEffect = NoteEffectType.None;
             FadeEffect = FadeEffectType.None;
             RandomSong = false;
-            Playing = false;
+            Mode = ModeType.ClubMix;
         }
 
         public bool AllowViewer { get; set; }
@@ -53,6 +52,6 @@ namespace Arrowgene.Ez2Off.Common.Models
         public bool RandomSong { get; set; }
         public NoteEffectType NoteEffect { get; set; }
         public FadeEffectType FadeEffect { get; set; }
-        public bool Playing { get; set; }
+        public ModeType Mode { get; set; }
     }
 }

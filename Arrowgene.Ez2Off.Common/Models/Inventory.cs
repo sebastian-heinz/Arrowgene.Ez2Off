@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -32,21 +32,128 @@ namespace Arrowgene.Ez2Off.Common.Models
     public class Inventory
     {
         public const int MaxItems = 15;
+        public const int MaxGifts = 15;
         public const int MaxEquipment = 10;
         public const int InvalidSlot = -1;
 
         private readonly InventoryItem[] _items;
         private readonly InventoryItem[] _equipments;
+        private readonly GiftItem[] _gifts;
+
+        public bool ItemsChanged { get; set; }
 
         public Inventory()
         {
+            ItemsChanged = false;
             _items = new InventoryItem[MaxItems];
             _equipments = new InventoryItem[MaxEquipment];
+            _gifts = new GiftItem[MaxGifts];
         }
 
-        public Inventory(List<InventoryItem> inventoryItems) : this()
+        public void Load(List<InventoryItem> inventoryItems)
         {
-            LoadItems(inventoryItems);
+            foreach (InventoryItem item in inventoryItems)
+            {
+                if (item.Slot < MaxItems && item.Slot >= 0)
+                {
+                    _items[item.Slot] = item;
+                    item.Equipped = InvalidSlot;
+                }
+                else if (item.Equipped < MaxEquipment && item.Equipped >= 0)
+                {
+                    _equipments[item.Equipped] = item;
+                    item.Slot = InvalidSlot;
+                }
+            }
+        }
+
+        public void LoadGiftItems(List<GiftItem> giftItems)
+        {
+            int count = giftItems.Count;
+            for (int i = 0; i < MaxGifts && i < count; i++)
+            {
+                _gifts[i] = giftItems[i];
+            }
+        }
+
+        public GiftItem[] GetGiftItems()
+        {
+            GiftItem[] gifts = new GiftItem[MaxGifts];
+            Array.Copy(_gifts, 0, gifts, 0, MaxGifts);
+            return gifts;
+        }
+
+        public GiftItem GetGiftItem(int index)
+        {
+            if (index >= MaxGifts || index < 0)
+            {
+                return null;
+            }
+
+            return _gifts[index];
+        }
+
+        public GiftItem GetGiftItemById(int giftId)
+        {
+            for (int i = 0; i < MaxGifts; i++)
+            {
+                GiftItem gift = _gifts[i];
+                if (gift != null && gift.Id == giftId)
+                {
+                    return gift;
+                }
+            }
+
+            return null;
+        }
+
+        public bool AddGiftItem(GiftItem gift)
+        {
+            for (int i = 0; i < MaxGifts; i++)
+            {
+                if (_gifts[i] == null)
+                {
+                    _gifts[i] = gift;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool RemoveGiftItem(GiftItem item)
+        {
+            for (int i = 0; i < MaxGifts; i++)
+            {
+                if (_gifts[i] == item)
+                {
+                    _gifts[i] = null;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasGifts()
+        {
+            for (int i = 0; i < MaxGifts; i++)
+            {
+                GiftItem gift = _gifts[i];
+                if (gift != null && !gift.Read)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public InventoryItem[] GetEquipments()
+        {
+            InventoryItem[] equipments = new InventoryItem[MaxItems];
+            Array.Copy(_equipments, equipments, MaxItems);
+            return equipments;
         }
 
         public int GetAvatarId()
@@ -82,6 +189,28 @@ namespace Arrowgene.Ez2Off.Common.Models
             return inventoryItem.Item.Id;
         }
 
+        public int GetPremiumKeyId()
+        {
+            InventoryItem inventoryItem = GetEquiped(ItemType.Premium3);
+            if (inventoryItem == null)
+            {
+                return 0;
+            }
+
+            return inventoryItem.Item.Id;
+        }
+
+        public int GetFreeTicketId()
+        {
+            InventoryItem inventoryItem = GetEquiped(ItemType.Premium4);
+            if (inventoryItem == null)
+            {
+                return 0;
+            }
+
+            return inventoryItem.Item.Id;
+        }
+
         public InventoryItem GetEquiped(ItemType itemType)
         {
             switch (itemType)
@@ -89,13 +218,71 @@ namespace Arrowgene.Ez2Off.Common.Models
                 case ItemType.Avatar: return GetEquip(0);
                 case ItemType.Skin: return GetEquip(1);
                 case ItemType.Note: return GetEquip(2);
+                case ItemType.Premium1: return GetEquip(3);
+                case ItemType.Premium2: return GetEquip(4);
+                case ItemType.Premium3: return GetEquip(5);
+                case ItemType.Premium4: return GetEquip(6);
                 default: return null;
             }
         }
 
+        /**
+         * Returns the amount of bonus exp from equipments
+         */
+        public int GetExpBonusPercentage()
+        {
+            int percentage = 0;
+            for (int i = 0; i <= 6; i++)
+            {
+                InventoryItem equip = GetEquip(i);
+                if (equip != null)
+                {
+                    percentage += equip.Item.ExpPlus;
+                }
+            }
+
+            return percentage;
+        }
+
+        /**
+         * Returns the amount of bonus hp from equipments
+         */
+        public int GetHpBonusPercentage()
+        {
+            int percentage = 0;
+            for (int i = 0; i <= 6; i++)
+            {
+                InventoryItem equip = GetEquip(i);
+                if (equip != null)
+                {
+                    percentage += equip.Item.HpPlus;
+                }
+            }
+
+            return percentage;
+        }
+
+        /**
+         * Returns the amount of bonus coins from equipments
+         */
+        public int GetCoinBonusPercentage()
+        {
+            int percentage = 0;
+            for (int i = 0; i <= 6; i++)
+            {
+                InventoryItem equip = GetEquip(i);
+                if (equip != null)
+                {
+                    percentage += equip.Item.CoinPlus;
+                }
+            }
+
+            return percentage;
+        }
+
         /// <summary>
         /// Adds an Item to the inventory.
-        /// Assings the slot to the item.
+        /// Assigns the slot to the item.
         /// Returns false if the inventory is full.
         /// </summary>
         public bool AddItem(InventoryItem item)
@@ -122,6 +309,29 @@ namespace Arrowgene.Ez2Off.Common.Models
             }
 
             return _items[index];
+        }
+
+        public InventoryItem GetItemById(int itemId)
+        {
+            for (int i = 0; i < MaxItems; i++)
+            {
+                InventoryItem item = _items[i];
+                if (item != null && item.Id == itemId)
+                {
+                    return item;
+                }
+            }
+
+            for (int i = 0; i < MaxEquipment; i++)
+            {
+                InventoryItem item = _equipments[i];
+                if (item != null && item.Id == itemId)
+                {
+                    return item;
+                }
+            }
+
+            return null;
         }
 
 
@@ -238,23 +448,6 @@ namespace Arrowgene.Ez2Off.Common.Models
             }
 
             return true;
-        }
-
-        private void LoadItems(List<InventoryItem> inventoryItems)
-        {
-            foreach (InventoryItem item in inventoryItems)
-            {
-                if (item.Slot < MaxItems && item.Slot >= 0)
-                {
-                    _items[item.Slot] = item;
-                    item.Equipped = InvalidSlot;
-                }
-                else if (item.Equipped < MaxEquipment && item.Equipped >= 0)
-                {
-                    _equipments[item.Equipped] = item;
-                    item.Slot = InvalidSlot;
-                }
-            }
         }
     }
 }

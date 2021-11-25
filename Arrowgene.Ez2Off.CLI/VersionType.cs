@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -24,7 +24,8 @@ namespace Arrowgene.Ez2Off.CLI
 {
     public enum VersionType
     {
-        Reboot13,
-        Solista
+        Beta = 0,
+        Reboot13 = 3,
+        Reboot14 = 4
     }
 }

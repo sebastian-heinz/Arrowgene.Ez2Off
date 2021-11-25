@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -20,73 +20,35 @@
  * along with Arrowgene.Ez2Off. If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using Arrowgene.Ez2Off.Server.Client;
 using Arrowgene.Ez2Off.Server.Database;
-using Arrowgene.Ez2Off.Server.Log;
-using Arrowgene.Ez2Off.Server.Models;
+using Arrowgene.Ez2Off.Server.Logs;
+using Arrowgene.Ez2Off.Server.Model;
 using Arrowgene.Ez2Off.Server.Sessions;
 using Arrowgene.Ez2Off.Server.Settings;
-using Arrowgene.Services.Buffers;
-using Arrowgene.Services.Logging;
-using Arrowgene.Services.Networking.ServerBridge;
+using Arrowgene.Logging;
 
 namespace Arrowgene.Ez2Off.Server.Packet
 {
     public abstract class Handler<T> : IHandler where T : EzServer
     {
-        protected T Server { get; }
-        protected EzServerSettings Settings { get; }
-        protected ISessionManager SessionManager { get; }
-        protected IDatabase Database { get; }
-        protected IBridge Bridge { get; }
-
-        // TODO rename
-        protected EzLogger _logger { get; }
-
         protected Handler(T server)
         {
-            _logger = LogProvider<EzLogger>.GetLogger(this);
+            Logger = LogProvider.Logger<EzLogger>(this);
             Server = server;
             Settings = Server.Settings;
-            SessionManager = Server.SessionManager;
+            Sessions = Server.Sessions;
             Database = Server.Database;
-            Bridge = Server.Bridge;
+            Router = Server.Router;
         }
 
         public abstract int Id { get; }
-
+        public virtual int ExpectedSize => EzServer.NoExpectedSize;
+        protected T Server { get; }
+        protected EzSettings Settings { get; }
+        protected SessionManager Sessions { get; }
+        protected IDatabase Database { get; }
+        protected EzLogger Logger { get; }
+        protected PacketRouter Router { get; }
         public abstract void Handle(EzClient client, EzPacket packet);
-
-
-        protected void Send(EzClient client, EzPacket packet)
-        {
-            Server.Send(client, packet);
-        }
-
-        protected void Send(List<EzClient> clients, EzPacket packet)
-        {
-            Server.Send(clients, packet);
-        }
-
-        protected void Send(EzClient client, byte id, IBuffer data)
-        {
-            Server.Send(client, id, data);
-        }
-
-        protected void Send(List<EzClient> clients, byte id, IBuffer data)
-        {
-            Server.Send(clients, id, data);
-        }
-
-        protected void Send(Channel channel, byte id, IBuffer data)
-        {
-            Server.Send(channel, id, data);
-        }
-
-        protected void Send(Room room, byte id, IBuffer data)
-        {
-            Server.Send(room, id, data);
-        }
     }
 }

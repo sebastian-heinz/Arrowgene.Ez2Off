@@ -15,17 +15,15 @@ Server Emulator for the Online Game Ez2On.
     - [OSX - Development - VSCode](#osx---development---vscode)
   - [Running under Windows](#running-under-windows)
     - [Windows - Server](#windows---server)
+    - [Windows - Development - VSCode](#windows---development---vscode)
 - [Clients](#clients)
-  - [R13 (Reboot13)](#r13-(reboot13))
+  - [R13 (Reboot13)](#r13-reboot13)
     - [R13 - OSX - Game](#r13---osx---game)
     - [R13 - Windows - Game](#r13---windows---game)
-    - [R13 - Startup Parameter](#r13---startup-parameter)
-  - [R14 (Reboot14)](#r14-(reboot14))
-- [Architecture](#architecture)
-  - [Flow](#flow)
+  - [R14 (Reboot14)](#r14-reboot14)
 - [Attribution](#attribution)
   - [Contributers](#contributers)
-  - [3rd Parties and Libaries](#3rd-parties-and-libaries)
+  - [3rd Parties and Libraries](#3rd-parties-and-libraries)
 
 Disclaimer
 ===
@@ -38,11 +36,11 @@ including proof and it will be removed.
 
 Project
 ===
-The project is splitted into different sub projects.
+The project is split into different sub projects.
 
 ### Arrowgene.Ez2Off.CLI
 [Command Line Interface] tool to execute all tasks that are related to the server and its development. 
-It mainly helps to kickstart and run the code from the core libaries.
+It mainly helps to start and run the code from the core libraries.
 
 ### Arrowgene.Ez2Off.Common
 [Library] that includes helper methods that are used across the project.
@@ -62,127 +60,126 @@ It mainly helps to kickstart and run the code from the core libaries.
 
 ### OSX - Server
 1) Ensure you have .NET Core 2.0 or higher
-- [https://www.microsoft.com/net/download/macos](https://www.microsoft.com/net/download/macos)
+   - [https://www.microsoft.com/net/download/macos](https://www.microsoft.com/net/download/macos)
 
 2) Clone the project:
-```
-git clone https://github.com/Arrowgene/Arrowgene.Ez2Off.git
-```
+   ```
+   git clone https://github.com/Arrowgene/Arrowgene.Ez2Off.git
+   ```
 
-3) Change to the 'Command Line Interface'-Project:
-```
-cd Arrowgene.Ez2Off/Arrowgene.Ez2Off.CLI
-```
+3) Change to the Project:
+   ```
+   cd Arrowgene.Ez2Off
+   ```
 
 4) Restore the project dependencies:
-```
-dotnet restore
-```
+   ```
+   dotnet restore
+   ```
 
 5) Run the Server:
-```
-dotnet run
-```
+   ```
+   dotnet run --project Arrowgene.Ez2Off.CLI/Arrowgene.Ez2Off.CLI.csproj server reboot13
+   ```
 
 ### OSX - Development - VSCode
 
 1) Download VSCode [https://code.visualstudio.com/](https://code.visualstudio.com/)
 2) Install the C# Extension [https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp)
-3) Make changes :)
+3) Open the project folder (Arrowgene.Ez2Off/)
 
 
 ## Running under Windows
 
 ### Windows - Server
 1) Ensure you have .NET Core 2.0 or higher 
-[https://www.microsoft.com/net/download/windows](https://www.microsoft.com/net/download/windows)
+   [https://www.microsoft.com/net/download/windows](https://www.microsoft.com/net/download/windows)
 
 2) Clone the project:
-```
-git clone https://github.com/Arrowgene/Arrowgene.Ez2Off.git
-```
+   ```
+   git clone https://github.com/Arrowgene/Arrowgene.Ez2Off.git
+   ```
 
-3) Open to the Project in Visual Studio and run the 'Command Line Interface'-Project.
-I'm not sure about the exact steps as I havent tested this on a Windows box yet.
-I Will update this tutorial once I know the exact steps
+3) Change to the Project:
+   ```
+   cd Arrowgene.Ez2Off
+   ```
+
+4) Restore the project dependencies:
+   ```
+   dotnet restore
+   ```
+
+5) Run the Server:
+   ```
+   dotnet run --project Arrowgene.Ez2Off.CLI/Arrowgene.Ez2Off.CLI.csproj server reboot13
+   ```
+
+### Windows - Development - VSCode
+
+1) Download VSCode [https://code.visualstudio.com/](https://code.visualstudio.com/)
+2) Install the C# Extension [https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp)
+3) Open the project folder (Arrowgene.Ez2Off/)
 
 
 Clients
 ===
 
 ## R13 (Reboot13)
-The client that is compatible with this server is ez2on reboot from 2013.
-We assigned the arbitary name "Reboot13" or "R13" to it.
+The client that is compatible when using `server reboot13`-argument is ez2on reboot from 2013.
+We assigned the arbitrary name "Reboot13" or "R13" to it.
 
 
 ### R13 - OSX - Game
 To Run the game on OSX you will need wine
 
-1) Follow the tutorial until you completed Part 4:  
-https://www.davidbaumgold.com/tutorials/wine-mac/
+#### Install wine
+A more detailed instruction can be found here: https://www.davidbaumgold.com/tutorials/wine-mac/
 
-2) Copy the game directory to your wine 'C' drive.
-The 'C'-drive can usually be found at your home directory
-```
-cd ~/.wine/drive_c
-```
+1) Install homebrew https://brew.sh/
+2) Install XQuartz Using Homebrew
+   ```
+   brew cask install xquartz
+   ```
+3) Install Wine Using Homebrew
+   ```
+   brew install wine
+   ```
+   
+#### Start Game
+1) Copy the game directory to your wine 'C' drive.
+   The 'C'-drive can usually be found at your home directory
+   ```
+   cd ~/.wine/drive_c
+   ```
 
-TODO
+2) Start the game with the following command: 
+   ```
+   wine EZ2ON_Online.exe "session^|account^|hash^|9999"
+   ```
 
-If the server is running the game should connect to the Server.
+3) If the server is running the game should connect to the Server.
 
 ### R13 - Windows - Game
 
-TODO
+1) Navigate to the game directory
 
-
-### R13 - Startup Parameter
-
-The separator used is a '|' symbol, in some systems you might need to escape it.
-```
-ez.exe "session|account|hash|9999"
-```
-
-osx 
-```
-wine ez.exe "session^|account^|hash^|9999"
-```
-
-win 
-```
-ez.exe session\|account\|hash\|9999
-```
+2) Start the game with the following command: 
+   ```
+   EZ2ON_Online.exe session\|account\|hash\|9999
+   ```
 
 ## R14 (Reboot14)
-IF YOU ARE A REVERSE ENGINEER, PLEASE HELP TO FIND A WAY TO START THE EXECUTABLE.  
-
-We would like to develop the server against the latest official client (ez2on reboot from 2014 (Reboot14/R14).
-The executable was packet with VMProtect 2.07 and we were able to unpack the executable,
-so it can be loaded into a debugger.  
-
-BUT we have not found out how to start the game or which parameters it requires, 
-we always get a message stating "Please start the game from the web".
-If you can find out how to correctly start this version of ez2on reboot, please let us know.
-For more details feel free to contact us or open an issue.
-
-Thanks alot!
-
-Architecture
-===
-
-### Flow
-1) Request a Session from the API by providing credentials (Account + Password).
-2) Provide the Session along with Account and Password to the client (Session Account Password).
+Work In Progress
 
 Attribution
 ===
 ## Contributers
-- Sebastian Heinz
+- Sebastian Heinz [@sebastian-heinz](https://github.com/sebastian-heinz)
 
-## 3rd Parties and Libaries
+## 3rd Parties and Libraries
 - System.Data.SQLite (https://system.data.sqlite.org/)
 - bcrypt.net (https://github.com/BcryptNet/bcrypt.net)
-- JavaScript-MD5 (https://github.com/blueimp/JavaScript-MD5) 
 - xUnit.net (https://github.com/xunit/xunit)
 - .NET Standard (https://github.com/dotnet/standard)
 - Arrowgene.Services (https://github.com/Arrowgene/Arrowgene.Services)

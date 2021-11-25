@@ -1,25 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <Title>Arrowgene.Ez2Off.Server</Title>
         <Company>Arrowgene</Company>
         <Product>Arrowgene.Ez2Off</Product>
         <Version>0.0.0.0</Version>
-        <Copyright>Copyright © 2017 Arrowgene</Copyright>
+        <Copyright>Copyright © 2020 Arrowgene</Copyright>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Arrowgene.Services" Version="1.9.7"/>
-        <PackageReference Include="BCrypt.Net-Next.StrongName" Version="2.1.3"/>
-    </ItemGroup>
-    <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
-        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.108"/>
-    </ItemGroup>
-    <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
-        <PackageReference Include="System.Data.SQLite.Mac" Version="1.0.104.2"/>
+        <PackageReference Include="Arrowgene.Services" Version="1.14.0" />
+        <PackageReference Include="BCrypt.Net-Next.StrongName" Version="3.1.2" />
+        <PackageReference Include="MySqlConnector" Version="0.56.0" />
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.109.2" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Arrowgene.Ez2Off.Common\Arrowgene.Ez2Off.Common.csproj"/>
-        <ProjectReference Include="..\Arrowgene.Ez2Off.Data\Arrowgene.Ez2Off.Data.csproj"/>
+        <ProjectReference Include="..\Arrowgene.Ez2Off.Common\Arrowgene.Ez2Off.Common.csproj" />
+        <ProjectReference Include="..\Arrowgene.Ez2Off.Data\Arrowgene.Ez2Off.Data.csproj" />
     </ItemGroup>
     <PropertyGroup>
         <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
@@ -28,9 +24,9 @@
         <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
     </PropertyGroup>
     <ItemGroup>
-        <ContentWithTargetPath Include="Api\Web\**">
+        <ContentWithTargetPath Include="Database\Schema\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <TargetPath>Web\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+            <TargetPath>Database\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
 </Project>

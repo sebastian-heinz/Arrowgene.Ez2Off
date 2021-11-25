@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -27,12 +27,14 @@ namespace Arrowgene.Ez2Off.Common.Models
     [Serializable]
     public class Setting
     {
+        public int CharacterId { get; set; }
         public byte VolumeMenuMusic { get; set; }
-        public byte VolumeMenuSFX { get; set; }
+        public byte VolumeMenuSfx { get; set; }
         public byte VolumeGameMusic { get; set; }
-        public byte VolumeGameSFX { get; set; }
+        public byte VolumeGameSfx { get; set; }
         public BgaSettings BgaSettings { get; set; }
         public byte SkinPosition { get; set; }
+        public byte SkinType { get; set; }
         public KeySettings KeySettingsRuby { get; set; }
         public KeySettings KeySettingsStreet { get; set; }
         public KeySettings KeySettingsClub { get; set; }
@@ -43,11 +45,27 @@ namespace Arrowgene.Ez2Off.Common.Models
             KeySettingsRuby = new KeySettings(ModeType.RubyMix);
             KeySettingsStreet = new KeySettings(ModeType.StreetMix);
             KeySettingsClub = new KeySettings(ModeType.ClubMix);
-            VolumeMenuMusic = 50;
-            VolumeMenuSFX = 50;
-            VolumeGameMusic = 50;
-            VolumeGameSFX = 50;
+            VolumeMenuMusic = 100;
+            VolumeMenuSfx = 100;
+            VolumeGameMusic = 100;
+            VolumeGameSfx = 100;
             SkinPosition = 0;
+            SkinType = 0;
+        }
+
+        public void Load(Setting setting)
+        {
+            CharacterId = setting.CharacterId;
+            BgaSettings = new BgaSettings(setting.BgaSettings.Animation, setting.BgaSettings.Battle);
+            KeySettingsRuby = new KeySettings(setting.KeySettingsRuby);
+            KeySettingsStreet = new KeySettings(setting.KeySettingsStreet);
+            KeySettingsClub = new KeySettings(setting.KeySettingsClub);
+            VolumeMenuMusic = setting.VolumeMenuMusic;
+            VolumeMenuSfx = setting.VolumeMenuSfx;
+            VolumeGameMusic = setting.VolumeGameMusic;
+            VolumeGameSfx = setting.VolumeGameSfx;
+            SkinPosition = setting.SkinPosition;
+            SkinType = setting.SkinType;
         }
 
         public void SetKeySettings(KeySettings keySettings, ModeType modeType)

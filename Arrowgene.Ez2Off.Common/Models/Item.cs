@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -27,18 +27,26 @@ namespace Arrowgene.Ez2Off.Common.Models
     [Serializable]
     public class Item
     {
+        public const double SellFactor = 1.42857;
+
+        /// <summary>
+        /// 1 Cash = 58.333 Coins
+        /// </summary>
+        public const double ConvertFactor = 58.333;
+
         public Item()
         {
             Id = -1;
         }
 
+        public ItemCurrencyType Currency { get; set; }
         public string Image { get; set; }
-        public int a { get; set; }
         public string Name { get; set; }
-        public int b { get; set; }
         public int Duration { get; set; }
-        public int Coins { get; set; }
+        public int Price { get; set; }
         public int Level { get; set; }
+
+        public bool Enabled { get; set; }
 
         /// <summary>
         /// 경험치
@@ -58,17 +66,8 @@ namespace Arrowgene.Ez2Off.Common.Models
         /// </summary>
         public int DefensePlus { get; set; }
 
-        public int k { get; set; }
-        public int l { get; set; }
-        public int m { get; set; }
-        public int n { get; set; }
-        public int o { get; set; }
         public string Effect { get; set; }
         public int Id { get; set; }
-        public int q { get; set; }
         public ItemType Type { get; set; }
-        public int s { get; set; }
-        public int t { get; set; }
-        public int u { get; set; }
     }
 }

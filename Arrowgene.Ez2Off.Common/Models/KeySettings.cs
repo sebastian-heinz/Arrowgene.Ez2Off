@@ -2,7 +2,7 @@
  * This file is part of Arrowgene.Ez2Off
  *
  * Arrowgene.Ez2Off is a server implementation for the game "Ez2On".
- * Copyright (C) 2017-2018 Sebastian Heinz
+ * Copyright (C) 2017-2020 Sebastian Heinz
  *
  * Github: https://github.com/Arrowgene/Arrowgene.Ez2Off
  *
@@ -27,6 +27,26 @@ namespace Arrowgene.Ez2Off.Common.Models
     [Serializable]
     public class KeySettings
     {
+        public KeySettings()
+        {
+        }
+
+        public KeySettings(KeySettings keySettings)
+        {
+            KeyAc1 = keySettings.KeyAc1;
+            KeyAc2 = keySettings.KeyAc2;
+            KeyAc3 = keySettings.KeyAc3;
+            KeyAc4 = keySettings.KeyAc4;
+            KeyAc5 = keySettings.KeyAc5;
+            KeyAc6 = keySettings.KeyAc6;
+            KeyOn1 = keySettings.KeyOn1;
+            KeyOn2 = keySettings.KeyOn2;
+            KeyOn3 = keySettings.KeyOn3;
+            KeyOn4 = keySettings.KeyOn4;
+            KeyOn5 = keySettings.KeyOn5;
+            KeyOn6 = keySettings.KeyOn6;
+        }
+
         public byte KeyAc1 { get; set; }
         public byte KeyAc2 { get; set; }
         public byte KeyAc3 { get; set; }
@@ -40,7 +60,7 @@ namespace Arrowgene.Ez2Off.Common.Models
         public byte KeyOn4 { get; set; }
         public byte KeyOn5 { get; set; }
         public byte KeyOn6 { get; set; }
-        
+
         public KeySettings(ModeType modeType)
         {
             switch (modeType)
@@ -52,7 +72,7 @@ namespace Arrowgene.Ez2Off.Common.Models
                     KeyOn4 = 0x14;
                     KeyOn5 = 0xFF;
                     KeyOn6 = 0xFF;
-                    
+
                     KeyAc1 = 0x22;
                     KeyAc2 = 0x18;
                     KeyAc3 = 0x0E;
@@ -67,7 +87,7 @@ namespace Arrowgene.Ez2Off.Common.Models
                     KeyOn4 = 0x13;
                     KeyOn5 = 0x14;
                     KeyOn6 = 0xFF;
-                    
+
                     KeyAc1 = 0x18;
                     KeyAc2 = 0x0E;
                     KeyAc3 = 0x19;
@@ -82,7 +102,7 @@ namespace Arrowgene.Ez2Off.Common.Models
                     KeyOn4 = 0x13;
                     KeyOn5 = 0x14;
                     KeyOn6 = 0x15;
-                    
+
                     KeyAc1 = 0x22;
                     KeyAc2 = 0x18;
                     KeyAc3 = 0x0E;
