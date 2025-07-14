@@ -1125,45 +1125,45 @@ public Song SelectSong(int songId)
             return songs;
         }
 
-        public bool UpsertSong(Song song)
-        {
-            string[] columns =
-            {
-                "id", "name", "category", "duration", "bpm", "file_name",
-                "ruby_ez_exr", "ruby_ez_notes", "ruby_nm_exr", "ruby_nm_notes", "ruby_hd_exr", "ruby_hd_notes",
-                "ruby_shd_exr", "ruby_shd_notes",
-                "street_ez_exr", "street_ez_notes", "street_nm_exr", "street_nm_notes", "street_hd_exr",
-                "street_hd_notes", "street_shd_exr", "street_shd_notes",
-                "club_ez_exr", "club_ez_notes", "club_nm_exr", "club_nm_notes", "club_hd_exr", "club_hd_notes",
-                "club_shd_exr", "club_shd_notes",
-                "measure_scale", "judgment_kool", "judgment_cool", "judgment_good", "judgment_miss", "gauge_cool",
-                "gauge_good", "gauge_miss", "gauge_fail"
-            };
-            object[] values =
-            {
-                song.Id, Escape(song.Name), (int) song.Category, song.Duration, song.Bpm, song.FileName,
-                song.RubyEzExr, song.RubyEzNotes, song.RubyNmExr, song.RubyNmNotes,
-                song.RubyHdExr, song.RubyHdNotes, song.RubyShdExr, song.RubyShdNotes,
-                song.StreetEzExr, song.StreetEzNotes, song.StreetNmExr, song.StreetNmNotes,
-                song.StreetHdExr, song.StreetHdNotes, song.StreetShdExr, song.StreetShdNotes,
-                song.ClubEzExr, song.ClubEzNotes, song.ClubNmExr, song.ClubNmNotes,
-                song.ClubHdExr, song.ClubHdNotes, song.ClubShdExr, song.ClubShdNotes,
-                song.MeasureScale, song.JudgmentKool, song.JudgmentCool, song.JudgmentGood,
-                song.JudgmentMiss, song.GaugeCool, song.GaugeGood, song.GaugeMiss,
-                song.GaugeFail
-            };
-            try
-            {
-                Upsert("ez2on_song", columns, values, "id", song.Id, out long id);
-            }
-            catch (Exception exception)
-            {
-                _logger.Exception(exception);
-                return false;
-            }
+       public bool UpsertSong(Song song)
+{
+    string[] columns =
+    {
+        "id", "name", "category", "duration", "bpm", "file_name",
+        "ruby_ez_exr", "ruby_ez_notes", "ruby_nm_exr", "ruby_nm_notes", "ruby_hd_exr", "ruby_hd_notes",
+        "ruby_shd_exr", "ruby_shd_notes",
+        "street_ez_exr", "street_ez_notes", "street_nm_exr", "street_nm_notes", "street_hd_exr",
+        "street_hd_notes", "street_shd_exr", "street_shd_notes",
+        "club_ez_exr", "club_ez_notes", "club_nm_exr", "club_nm_notes", "club_hd_exr", "club_hd_notes",
+        "club_shd_exr", "club_shd_notes",
+        "measure_scale", "judgment_kool", "judgment_cool", "judgment_good", "judgment_miss", "gauge_cool",
+        "gauge_good", "gauge_miss", "gauge_fail"
+    };
+    object[] values =
+    {
+        song.Id, song.Name, (int) song.Category, song.Duration, song.Bpm, song.FileName,
+        song.RubyEzExr, song.RubyEzNotes, song.RubyNmExr, song.RubyNmNotes,
+        song.RubyHdExr, song.RubyHdNotes, song.RubyShdExr, song.RubyShdNotes,
+        song.StreetEzExr, song.StreetEzNotes, song.StreetNmExr, song.StreetNmNotes,
+        song.StreetHdExr, song.StreetHdNotes, song.StreetShdExr, song.StreetShdNotes,
+        song.ClubEzExr, song.ClubEzNotes, song.ClubNmExr, song.ClubNmNotes,
+        song.ClubHdExr, song.ClubHdNotes, song.ClubShdExr, song.ClubShdNotes,
+        song.MeasureScale, song.JudgmentKool, song.JudgmentCool, song.JudgmentGood,
+        song.JudgmentMiss, song.GaugeCool, song.GaugeGood, song.GaugeMiss,
+        song.GaugeFail
+    };
+    try
+    {
+        Upsert("ez2on_song", columns, values, "id", song.Id, out long id);
+    }
+    catch (Exception exception)
+    {
+        _logger.Exception(exception);
+        return false;
+    }
 
-            return true;
-        }
+    return true;
+}
 
         public List<Radiomix> SelectRadiomixes()
         {
