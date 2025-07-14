@@ -1141,7 +1141,7 @@ public Song SelectSong(int songId)
             };
             object[] values =
             {
-                song.Id, Escape(song.Name), (int) song.Category, song.Duration, song.Bpm, song.FileName,
+                song.Id, song.Name, (int) song.Category, song.Duration, song.Bpm, song.FileName,
                 song.RubyEzExr, song.RubyEzNotes, song.RubyNmExr, song.RubyNmNotes,
                 song.RubyHdExr, song.RubyHdNotes, song.RubyShdExr, song.RubyShdNotes,
                 song.StreetEzExr, song.StreetEzNotes, song.StreetNmExr, song.StreetNmNotes,
